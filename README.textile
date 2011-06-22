@@ -39,6 +39,9 @@ Note: The example above uses the Google hosted version of jQuery; there is also 
 
 h2. Changelog
 
+h3. Version 1.2
+* Added 'maskedX' and 'maskedY' options.
+
 h3. Version 1.1
 
 * Added 'centeredX' and 'centeredY' options.

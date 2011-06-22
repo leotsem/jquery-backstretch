@@ -1,6 +1,6 @@
 /*
  * jQuery Backstretch
- * Version 1.1.2
+ * Version 1.2
  * http://srobbin.com/jquery-plugins/jquery-backstretch/
  *
  * Add a dynamically-resized background image to the page
@@ -15,7 +15,9 @@
         var settings = {
             centeredX: true,         // Should we center the image on the X axis?
             centeredY: true,         // Should we center the image on the Y axis?
-            speed: 0                // fadeIn speed for background after image loads (e.g. "fast" or 500)
+            speed: 0,                // fadeIn speed for background after image loads (e.g. "fast" or 500)
+			maskedX: 0,				// Should we mask the image on X axis?
+			maskedY: 0				// Should we mask the image on Y axis?
         },
         rootElement = ("onorientationchange" in window) ? $(document) : $(window), // hack to acccount for iOS position:fixed shortcomings
         imgRatio, bgImg, bgWidth, bgHeight, bgOffset, bgCSS;
@@ -33,7 +35,7 @@
             // Prepend image, wrapped in a DIV, with some positioning and zIndex voodoo
             if(src) {
                 var container = $("<div />").attr("id", "backstretch")
-                                            .css({left: 0, top: 0, position: "fixed", overflow: "hidden", zIndex: -9999}),
+                                            .css({left: settings.maskedX, top: settings.maskedY, position: "fixed", overflow: "hidden", zIndex: -9999}),
                     img = $("<img />").css({position: "relative", display: "none"})
                                       .bind("load", function(e) {                                          
                                           var self = $(this);
@@ -58,8 +60,8 @@
         function _adjustBG(fn) {
             try {
                 bgCSS = {left: 0, top: 0}
-                bgWidth = rootElement.width();
-                bgHeight = bgWidth / imgRatio;
+                bgWidth = rootElement.width() + (Math.abs(settings.maskedX) * 2);
+                bgHeight = (bgWidth / imgRatio) + (Math.abs(settings.maskedY) * 2);
 
                 // Make adjustments based on image ratio
                 // Note: Offset code provided by Peter Baker (http://ptrbkr.com/). Thanks, Peter!
@@ -73,7 +75,7 @@
                     if(settings.centeredX) $.extend(bgCSS, {left: "-" + bgOffset + "px"});
                 }
 
-                $("#backstretch img").width( bgWidth ).height( bgHeight ).css(bgCSS);
+                $("#backstretch img").width( bgWidth).height( bgHeight).css(bgCSS);
             } catch(err) {
                 // IE7 seems to trigger _adjustBG before the image is loaded.
                 // This try/catch block is a hack to let it fail gracefully.
